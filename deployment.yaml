@@ -1,0 +1,9 @@
+imports:
+- path: vm-template.jinja
+
+resources:
+- name: my-vm
+  type: vm-template.jinja
+  properties:
+    zone: us-central1-a
+    machine_type: f1-micro
