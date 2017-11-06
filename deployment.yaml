@@ -1,9 +1,57 @@
 imports:
-- path: vm-template.jinja
+- path: gce_instancetemplate.py
+- path: managed_instance_group.py
 
 resources:
-- name: my-vm
-  type: vm-template.jinja
+- name: webapp-instance-template
+  type: gce_instancetemplate.py
   properties:
-    zone: us-central1-a
-    machine_type: f1-micro
+    machineType: f1-micro
+    image_url: 'https://www.googleapis.com/compute/v1/projects/debian-cloud/global/images/family/debian-9'
+    networkInterfaces:
+    - accessConfigs:
+      - { name: external-nat, type: ONE_TO_ONE_NAT }
+    tags:
+      - webapp
+    disks:
+    - deviceName: boot
+    - boot: true
+    - autoDelete: true
+    serviceAccounts:
+    - scopes:
+      - devstorage.read_only
+      - logging.write
+      - monitoring.write
+      - servicecontrol
+      - service.management.readonly
+      - trace.append
+- name: webapp-managed-instance-group
+  type: managed_instance_group.py
+  properties:
+    migs:
+    - mig_central:
+      name: web-app-central
+      region: us-central1
+      template: $(ref.webapp-instance-template.selfLink)
+      size: 1
+      zone: us-central1-a
+      base: webapp-central
+      autoscaler:
+        min: 1
+        max: 2
+        cool: 90
+        util: .8
+        criteria: load_balancer
+    - mig_west:
+      name: web-app-west
+      region: us-west1
+      template: $(ref.webapp-instance-template.selfLink)
+      size: 1
+      zone: us-west1-a
+      base: webapp-west
+      autoscaler:
+        min: 1
+        max: 2
+        cool: 90
+        util: .8
+        criteria: load_balancer
