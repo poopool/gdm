@@ -1,9 +1,8 @@
 imports:
-- path: gce_instancetemplate_v1.py
-- path: lib/utils.py
+- path: gce_instancetemplate.py
 
 resources:
-- type: gce_instancetemplate_v1.py
+- type: gce_instancetemplate.py
   name: gce-instancetemplate-test
   properties:
     machineType: f1-micro
@@ -11,10 +10,6 @@ resources:
     networkInterfaces:
     - accessConfigs:
         - { name: external-nat, type: ONE_TO_ONE_NAT }
-    disks:
-    - deviceName: boot
-    - boot: true
-    - autoDelete: true
     serviceAccounts:
     - scopes:
       - devstorage.read_only

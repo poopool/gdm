@@ -1,89 +1,65 @@
-"""Creates the virtual machine."""
+"""Basic InstanceTemplate template Skeleton."""
 
-GCE_URL_BASE = 'https://www.googleapis.com/compute/v1/'
-
+GCE_BASE_URL = 'https://www.googleapis.com/compute/v1/'
+SCOPE_BASE_URL = 'https://www.googleapis.com/auth/'
 
 def generate_config(context):
-    """ Iterates through the resource provided by context """
-
-    resources = []
-    project = context.env['project']
+    """Generate InstanceTemplate configuration."""
     name = context.env['name']
+    project = context.env['project']
     machine_type = context.properties['machineType']
-    zone = context.properties['zone']
-    count = context.properties['count']
-    image_project = context.properties['image_project']
-    image_name = context.properties['image_name']
 
-    for count in xrange(count):
-        instance_resources = {
-            'name': (name + '-' + str(count + 1)),
-            'type': 'compute.v1.instance',
+    # Disk array variables
+    # disks_dev_name = context.properties['disks'][0]['deviceName']
+    # disks_boot = context.properties['disks'][0]['boot']
+    # disks_auto_delete = context.properties['disks'][0]['autoDelete']
+    image_url = context.properties['image_url']
+
+    # Network Interface configuration variables
+    default_network = ''.join([GCE_BASE_URL, 'projects/', project, '/global/networks/default'])
+    net_access_cfg_name = context.properties['networkInterfaces'][0]['accessConfigs'][0]['name']
+    net_access_cfg_type = context.properties['networkInterfaces'][0]['accessConfigs'][0]['type']
+
+    instance_template = {
+        'name': name,
+        'type': 'compute.v1.instanceTemplate',
+        'properties': {
+            'project': project,
             'properties': {
-                'zone': zone,
-                'machineType': ''.join([GCE_URL_BASE, 'projects/',
-                                        project,
-                                        '/zones/', zone,
-                                        '/machineTypes/', machine_type]),
+                'machineType': machine_type,
+                'networkInterfaces': [{
+                    'network': default_network,
+                    'accessConfigs': [{
+                        'name': net_access_cfg_name,
+                        'type': net_access_cfg_type
+                    }]
+                }],
                 'disks': [{
                     'deviceName': 'boot',
                     'type': 'PERSISTENT',
                     'boot': True,
                     'autoDelete': True,
-                    'initializeParams': {
-                        'sourceImage': ''.join([GCE_URL_BASE, 'projects/',
-                                                image_project,
-                                                '/global/images/family/',
-                                                image_name])
-                        }
-                    }],
-                'networkInterfaces': [{
-                    'network': ''.join([GCE_URL_BASE, 'projects/',
-                                        project,
-                                        '/global/networks/default']),
-                    'accessConfigs': [{
-                        'name': 'External NAT',
-                        'type': 'ONE_TO_ONE_NAT'}],
+                    'initializeParams': {'sourceImage': image_url}
+                }],
+                'serviceAccounts': [{
+                    'scopes': [
+                        SCOPE_BASE_URL + s
+                        for s in context.properties['serviceAccounts'][0]['scopes']
+                    ],
                 }]
             }
         }
+    }
 
-        # Add labels if they exist
-        try:
-            instance_resources['properties']['labels'] = \
-                context.properties['labels']
-        except KeyError:
-            pass
+    # Add tags if they exist
+    try:
+        instance_template['properties']['properties']['tags'] = \
+            context.properties['tags']
+    except KeyError:
+        pass
 
-        # Add metadata items if they exist
-        try:
-            instance_resources['properties']['metadata'] = {
-                'items': context.properties['metadata_items']
-            }
-        except KeyError:
-            pass
-
-        # Add tags if they exist
-        try:
-            instance_resources['properties']['tags'] = \
-                context.properties['tags']
-        except KeyError:
-            pass
-
-        resources.append(instance_resources)
-
-    return {'resources': resources}
-
+    return {'resources': [instance_template]}
 
 if __name__ == "__main__":
     from lib.testing import GenerateConfigTester
-
-    EXTRA_PROPERTIES = {
-        'machineType': 'f1-micro',
-        'zone': 'us-central1-a',
-        'count': 1,
-        'image_project': 'debian-cloud',
-        'image_name': 'debian-9'
-    }
-
-    GenerateConfigTester.print_config(generate_config, EXTRA_PROPERTIES)
+    GenerateConfigTester.print_config(generate_config)
