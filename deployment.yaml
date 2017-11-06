@@ -1,29 +1,33 @@
-#
-# We'll probably have a config file per customer project that we can import
-# the required templates
-#
-
 imports:
-- path: gce_instance.py
+- path: gce_instancetemplate_v1.py
+- path: lib/utils.py
 
 resources:
-- name: vm
-  type: gce_instance.py
+- type: gce_instancetemplate_v1.py
+  name: gce-instancetemplate-test
   properties:
     machineType: f1-micro
-    zone: us-central1-a
-    image_project: debian-cloud
-    image_name: debian-9
-    labels:
-      ansible_group: stackdriver_monitored
-    metadata_items:
-    - key: startup-script
-      value: apt-get update; unattended-upgrade -v; apt-get install netcat -qy
+    image_url: 'https://www.googleapis.com/compute/v1/projects/debian-cloud/global/images/family/debian-9'
+    networkInterfaces:
+    - accessConfigs:
+        - { name: external-nat, type: ONE_TO_ONE_NAT }
+    disks:
+    - deviceName: boot
+    - boot: true
+    - autoDelete: true
+    serviceAccounts:
+    - scopes:
+      - devstorage.read_only
+      - logging.write
+      - monitoring.write
+      - servicecontrol
+      - service.management.readonly
+      - trace.append
     rs-Environment: testing
-    rs-Role: instance
+    rs-Role: instancetemplate
     rs-Application: rs_stl
     rs-CostCenter: rs-mgcp
     #rs-TemplatCommit: (we will need to add this through templating as it can't be passed through the command-line)
     rs-Team: rs-mgcp-ops
-    rs-Component: instance
+    rs-Component: instancetemplate
     #rs-PrimaryContact: (all rs-* fields optional, this is just to prove that)
