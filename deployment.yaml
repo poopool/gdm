@@ -10,6 +10,8 @@ resources:
     networkInterfaces:
     - accessConfigs:
         - { name: external-nat, type: ONE_TO_ONE_NAT }
+    tags:
+      - webapp
     serviceAccounts:
     - scopes:
       - devstorage.read_only

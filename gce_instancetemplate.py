@@ -53,7 +53,7 @@ def generate_config(context):
 
     # Add tags if they exist
     try:
-        instance_template['properties']['properties']['tags'] = \
+        instance_template['properties']['tags'] = \
             context.properties['tags']
     except KeyError:
         pass
