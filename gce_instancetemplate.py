@@ -10,9 +10,9 @@ def generate_config(context):
     machine_type = context.properties['machineType']
 
     # Disk array variables
-    disks_dev_name = context.properties['disks'][0]['deviceName']
-    disks_boot = context.properties['disks'][0]['boot']
-    disks_auto_delete = context.properties['disks'][0]['autoDelete']
+    # disks_dev_name = context.properties['disks'][0]['deviceName']
+    # disks_boot = context.properties['disks'][0]['boot']
+    # disks_auto_delete = context.properties['disks'][0]['autoDelete']
     image_url = context.properties['image_url']
 
     # Network Interface configuration variables
@@ -35,9 +35,10 @@ def generate_config(context):
                     }]
                 }],
                 'disks': [{
-                    'deviceName': disks_dev_name,
-                    'boot': disks_boot,
-                    'autoDelete': disks_auto_delete,
+                    'deviceName': 'boot',
+                    'type': 'PERSISTENT',
+                    'boot': True,
+                    'autoDelete': True,
                     'initializeParams': {'sourceImage': image_url}
                 }],
                 'serviceAccounts': [{
