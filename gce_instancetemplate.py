@@ -46,17 +46,18 @@ def generate_config(context):
                         SCOPE_BASE_URL + s
                         for s in context.properties['serviceAccounts'][0]['scopes']
                     ],
-                }]
+                }],
+                'tags': {'items': context.properties['tags']}
             }
         }
     }
 
     # Add tags if they exist
-    try:
-        instance_template['properties']['properties']['tags'] = \
-            context.properties['tags']
-    except KeyError:
-        pass
+    # try:
+    #     instance_template['properties']['properties']['tags'] = \
+    #         context.properties['tags'][0]['items']
+    # except KeyError:
+    #     pass
 
     return {'resources': [instance_template]}
 
