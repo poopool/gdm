@@ -5,6 +5,7 @@ def generate_config(context):
     """Forwarding Rule Generate configuration."""
 
     name = context.env['name']
+    region = context.properties['region']
     ip_protocol = context.properties['IPProtocol']
     port_range = context.properties['portRange']
     ip_address = context.properties['IPAddress']
@@ -16,6 +17,7 @@ def generate_config(context):
             'name': name,
             'type': 'compute.v1.forwardingRules',
             'properties': {
+                'region': region,
                 'IPProtocol': ip_protocol,
                 'portRange': port_range,
                 'IPAddress': ip_address,

@@ -16,27 +16,27 @@ resources:
 - type: static_ip_v1.py
   name: vpn-static-ip
   properties:
-    region: us-central
+    region: us-central1
 #create vpn gateway in above vpc
 - type: vpn_gateway_v1.py
   name: vpn1
   properties:
-    region: us-central
+    region: us-central1
     network: $(ref.network-v1-test.selfLink)
 #create a forwarding rule that forwards ESP traffic toward the Cloud VPN gateway
-- type: forwarding_rule_v1.py
-  name: fr-esp
-  properties:
-    region: us-central
-    IPProtocol: ESP
-    IPAddress: $(ref.vpn-static-ip.address)
-    network: $(ref.network-v1-test.selfLink)
-    target: $(ref.vpn1.selfLink)
+#- type: forwarding_rule_v1.py
+#  name: fr-esp
+#  properties:
+#    region: us-central1
+#    IPProtocol: ESP
+#    IPAddress: $(ref.vpn-static-ip.address)
+#    network: $(ref.network-v1-test.selfLink)
+#    target: $(ref.vpn1.selfLink)
 #forwarding rule - UDP 500
 - type: forwarding_rule_v1.py
   name: fr-udp500
   properties:
-    region: us-central
+    region: us-central1
     IPProtocol: UDP
     portRange: 500
     IPAddress: $(ref.vpn-static-ip.address)
@@ -46,7 +46,7 @@ resources:
 - type: forwarding_rule_v1.py
   name: fr-udp4500
   properties:
-    region: us-central
+    region: us-central1
     IPProtocol: UDP
     portRange: 4500
     IPAddress: $(ref.vpn-static-ip.address)
@@ -56,7 +56,7 @@ resources:
 - type: vpn_tunnel_v1.py
   name: tunnel1
   properties:
-    region: us-central
+    region: us-central1
     forwardingRule: $(ref.fr-udp4500.selfLink)
     ikeVersion: 2
     peerIp: 1.2.3.4/32
