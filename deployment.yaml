@@ -1,6 +1,7 @@
 imports:
 - path: cluster.py
 - path: network.py
+- path: cloudsql.py
 
 resources:
 - name: vpc-network
@@ -13,6 +14,34 @@ resources:
     - us-central1
     subnet_ranges:
     - 10.1.0.0/20
+
+- name: cloudsql
+  type: cloudsql.py
+  properties:
+    region: us-central1
+    #Prefered zone
+    location_preference:
+      zone: us-central1-a
+    ip-configuration:
+      #Authorized networks to connect to cloudsql instance
+      authorizedNetworks:
+      - name: subnet-a
+        value: 199.27.25.0/24
+    db_machine_type: db-n1-standard-1
+    db_version: MYSQL_5_6
+    failover_replica:
+      #Failover read replica name
+      name: cloudsql-failover
+    backup_configuration:
+      kind: sql#backupConfiguration
+      #UTC timezone in the 24 hour format - HH:MM
+      startTime: 01:00
+      enabled: true
+      binaryLogEnabled: true
+    database_replication_enabled: true
+    backend_type: SECOND_GEN
+    data_disk_type: PD_SSD
+    data_disk_size: 25
 
 - type: cluster.py
   name: cluster1
