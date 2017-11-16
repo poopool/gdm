@@ -1,7 +1,19 @@
 imports:
 - path: cluster.py
+- path: network.py
 
 resources:
+- name: vpc-network
+  type: network.py
+  properties:
+    net_name: smash-network
+    subnet_names:
+    - subnet-1
+    subnet_regions:
+    - us-central1
+    subnet_ranges:
+    - 10.1.0.0/20
+
 - type: cluster.py
   name: cluster1
   properties:
@@ -15,8 +27,8 @@ resources:
     - monitoring
     - bigquery
     zone: us-central1-a
-    vpc_network: my-test-vpc
-    subnetwork: subnet-a
+    vpc_network: $(ref.smash-network.selfLink)
+    subnetwork: $(ref.subnet-1.selfLink)
     os_image_type: COS
     disk_size_gb: 10
     preemptible: false
