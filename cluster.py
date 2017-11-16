@@ -29,34 +29,21 @@ def GenerateConfig(context):
                   'nodePools': [{
                         'name': 'default-pool',
                         ##Per zone
-                        'initialNodeCount': 1,
+                        'initialNodeCount': context.properties['initial_node_count'],
                         'config': {
-                            'machineType': 'n1-standard-1',
-                            'imageType': 'COS',
-                            'diskSizeGb': 10,
-                            'preemptible': False,
+                            'machineType': context.properties['machine_type'],
+                            'imageType': context.properties['os_image_type'],
+                            'diskSizeGb': context.properties['disk_size_gb'],
+                            'preemptible': context.properties['preemptible'],
                             'oauthScopes': [
                                 'https://www.googleapis.com/auth/' + s
-                                for s in context.properties['oauthScopes']
+                                for s in context.properties['oauth_scopes']
                             ]
                         },
-                        'autoscaling': {
-                            'enabled': True,
-                            ##This is Min and Max nodes per zone
-                            'minNodeCount': 1,
-                            'maxNodeCount': 2
-                        },
-                        'management': {
-                            'autoUpgrade': False,
-                            'autoRepair': False,
-                            'upgradeOptions': {}
-                        }
+                        'autoscaling': context.properties['autoscaling'],
+                        'management': context.properties['management']
                     }],
-                  'locations': [
-                      'us-central1-a',
-                      'us-central1-b',
-                      'us-central1-c'
-                  ]
+                  'locations': context.properties['locations']
               }
           }
       }

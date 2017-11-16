@@ -5,19 +5,30 @@ resources:
 - type: cluster.py
   name: cluster1
   properties:
-    initialNodeCount: 1
+    #per zone
+    initial_node_count: 1
     machine_type: n1-standard-1
-    oauthScopes:
+    oauth_scopes:
     - devstorage.read_only
     - compute
     - logging.write
     - monitoring
     zone: us-central1-a
-#    - us-central1-a
-#    - us-central1-b
-#    - us-central1-c
+    os_image_type: COS
     disk_size_gb: 10
+    preemptible: false
     autoscaling:
       enabled: true
+      #per zone
       minNodeCount: 1
       maxNodeCount: 2
+    management:
+      autoUpgrade: false
+      autoRepair: false
+      upgradeOptions: {}
+    #pass this in if you want to
+    #have a multi regional cluster
+    locations:
+    - us-central1-a
+    - us-central1-b
+    - us-central1-c
