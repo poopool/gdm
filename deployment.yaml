@@ -13,7 +13,10 @@ resources:
     - compute
     - logging.write
     - monitoring
+    - bigquery
     zone: us-central1-a
+    vpc_network: my-test-vpc
+    subnetwork: subnet-a
     os_image_type: COS
     disk_size_gb: 10
     preemptible: false

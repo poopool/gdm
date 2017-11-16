@@ -26,6 +26,7 @@ def GenerateConfig(context):
               'zone': context.properties['zone'],
               'cluster': {
                   'name': cluster_name,
+                  'network': context.properties['vpc_network'],
                   'nodePools': [{
                         'name': 'default-pool',
                         ##Per zone
@@ -43,7 +44,8 @@ def GenerateConfig(context):
                         'autoscaling': context.properties['autoscaling'],
                         'management': context.properties['management']
                     }],
-                  'locations': context.properties['locations']
+                  'locations': context.properties['locations'],
+                  'subnetwork': context.properties['subnetwork']
               }
           }
       }
