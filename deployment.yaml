@@ -18,6 +18,7 @@ resources:
 - name: cloudsql
   type: cloudsql.py
   properties:
+    name: cloudsql-test-template1
     region: us-central1
     #Prefered zone
     location_preference:
@@ -29,16 +30,21 @@ resources:
         value: 199.27.25.0/24
     db_machine_type: db-n1-standard-1
     db_version: MYSQL_5_6
+    # Can be CLOUD_SQL_INSTANCE or READ_REPLICA_INSTANCE
+    instance_type: CLOUD_SQL_INSTANCE
     failover_replica:
       #Failover read replica name
-      name: cloudsql-failover
+      name: cloudsql-test-template1-failover
     backup_configuration:
       kind: sql#backupConfiguration
       #UTC timezone in the 24 hour format - HH:MM
       startTime: 01:00
       enabled: true
       binaryLogEnabled: true
-    database_replication_enabled: true
+    ##
+    ##We are not passing Root password from here, as it gets saved in github and deployment-manager console
+    ##Create a sql resource without password, login to console, generate password and save it password-safe
+    ##
     backend_type: SECOND_GEN
     data_disk_type: PD_SSD
     data_disk_size: 25
