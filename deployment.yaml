@@ -2,8 +2,20 @@ imports:
 - path: cluster.py
 - path: network.py
 - path: cloudsql.py
+- path: enable_apis.py
 
 resources:
+- name: apis
+  type: enable_apis.py
+  properties:
+    apis:
+      - deploymentmanager.googleapis.com
+      - pubsub.googleapis.com
+      - sql-component.googleapis.com
+      - container.googleapis.com
+      - bigquery-json.googleapis.com
+      - datastore.googleapis.com
+
 - name: vpc-network
   type: network.py
   properties:
